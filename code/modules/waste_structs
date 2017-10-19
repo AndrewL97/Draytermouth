@@ -1,0 +1,20 @@
+/obj/structure/reagent_dispensers/well
+	icon = 'icons/obj/structures.dmi'
+  icon_state = 'well'
+	var/bucket = NULL // /obj/item/weapon/reagent_containers/glass/bucket
+  var/wheel = NULL // /obj/item/component/wheel
+  var/down = 0 //whether the well is up or down
+  var/reagentMix = NULL
+ 
+/obj/structure/reagent_dispensers/well/attack_hand(mob/user)
+  if(!bucket)
+    user.show_message(text("<span class='notice'>You need to attach a bucket to the [src]</span>"), 1)
+  if(down)
+    user.show_message("<span class='warning'>[user] raises the [bucket] out of the [src].</span>", 3, "<span class='warning'>You raise the [bucket] out of the [src].</span>", 1)
+  else
+    user.show_message("<span class='warning'>[user] lowers the [bucket] into the [src].</span>", 3, "<span class='warning'>You raise the [bucket] out of the [src].</span>", 1)
+
+//finish l8r 
+
+
+  
