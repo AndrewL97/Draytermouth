@@ -1,20 +1,38 @@
 /obj/structure/reagent_dispensers/well
 	icon = 'icons/obj/structures.dmi'
-  icon_state = 'well'
+	icon_state = 'well'
 	var/bucket = NULL // /obj/item/weapon/reagent_containers/glass/bucket
-  var/wheel = NULL // /obj/item/component/wheel
-  var/down = 0 //whether the well is up or down
-  var/reagentMix = NULL
- 
+	var/wheel = NULL // /obj/item/component/wheel
+	var/down = 0 //whether the well is up or down
+	initial_capacity = 100
+	initial_reagents = "{'water':1}" //Maybe make this "{'radium':0.02;'water':0.98}" for them rads?
+	amount_per_transfer_from_this = 100
+	possible_transfer_amounts = "5;10;25;50;100"
+	
+	
 /obj/structure/reagent_dispensers/well/attack_hand(mob/user)
-  if(!bucket)
-    user.show_message(text("<span class='notice'>You need to attach a bucket to the [src]</span>"), 1)
-  if(down)
-    user.show_message("<span class='warning'>[user] raises the [bucket] out of the [src].</span>", 3, "<span class='warning'>You raise the [bucket] out of the [src].</span>", 1)
-  else
-    user.show_message("<span class='warning'>[user] lowers the [bucket] into the [src].</span>", 3, "<span class='warning'>You raise the [bucket] out of the [src].</span>", 1)
-
+	if(!bucket)
+		user.show_message(text("<span class='notice'>You need to attach a bucket to the [src]</span>"), 1)
+	if(down)
+		user.show_message("<span class='warning'>[user] raises the [bucket] out of the [src].</span>", 3, "<span class='warning'>You raise the [bucket] out of the [src].</span>", 1)
+		
+	else
+		user.show_message("<span class='warning'>[user] lowers the [bucket] into the [src].</span>", 3, "<span class='warning'>You raise the [bucket] out of the [src].</span>", 1)
+	down = !down
+	
 //finish l8r 
 
+//Look, im sure there is a better way to do this.
+/obj/structure/reagent_dispensers/proc/refillBucket
+	var/datum/reagents/R = new/datum/reagents(initial_capacity)
+	reagents = R
+	R.my_atom = src
 
-  
+	if (!possible_transfer_amounts)
+		src.verbs -= /obj/structure/reagent_dispensers/verb/set_APTFT
+
+	if(istext(initial_reagents))
+		var/list/initial_reagent_list = json_decode(initial_reagents)
+		for(var/reagent in initial_reagent_list)
+			var/reagent_ratio = initial_reagent_list[reagent]
+			reagents.add_reagent(reagent, reagent_ratio * initial_capacity)
